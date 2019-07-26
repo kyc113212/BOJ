@@ -3,9 +3,9 @@
 using namespace std;
 
 int map[21][21];
-int dice[6];
+int dice[7];
 int arr_cmd[1001];
-int cur_pos;
+int cur_bottom_pos;
 int cur_top;
 
 int main() {
@@ -27,6 +27,7 @@ int main() {
 
 	int cur_x = x;
 	int cur_y = y;
+	cur_bottom_pos = 6;
 
 	for (int i = 0; i < cmd; i++) {
 		int next_x = 0;
@@ -47,6 +48,7 @@ int main() {
 
 		if (next_y < 0 || next_x < 0 || next_x >= col || next_y >= row)
 			continue;
+		
 
 
 		cur_x = next_x;
