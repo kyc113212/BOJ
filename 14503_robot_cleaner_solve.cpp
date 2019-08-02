@@ -30,7 +30,7 @@ bool check_dir(int y, int x) {
 	return true; //true인 경우 다 막혀 있다는 것
 }
 
-int bfs(queue<pos> &q) {
+int bfs(queue<pos>& q) {
 
 	q.push(pos(s_y, s_x, s_dir, 1));
 	visited[s_y][s_x] = true;
@@ -61,10 +61,7 @@ int bfs(queue<pos> &q) {
 				q.push(pos(next_y, next_x, next_dir, cur_cnt + 1));
 				break;
 			}
-			else if (map[next_y][next_x] == 1 || visited[next_y][next_x] == 1) {
-				next_dir--;
-				if (next_dir < 0)
-					next_dir = 3;
+			else if (map[next_y][next_x] == 1 || visited[next_y][next_x] == 1) {				
 				if (cur_dir == next_dir) {
 					if (map[cur_y + rdy[cur_dir]][cur_x + rdx[cur_dir]] == 1) {
 						return cur_cnt;
@@ -74,6 +71,9 @@ int bfs(queue<pos> &q) {
 						break;
 					}
 				}
+				next_dir--;
+				if (next_dir < 0)
+					next_dir = 3;
 			}
 		}
 	}
