@@ -53,7 +53,7 @@ int max_value(int arr[][51]) {
 	return mv;
 }
 
-void copy_map(int (*arr_1)[51], int (*arr_2)[51]) {
+void copy_map(int(*arr_1)[51], int(*arr_2)[51]) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			arr_2[i][j] = arr_1[i][j];
@@ -62,7 +62,7 @@ void copy_map(int (*arr_1)[51], int (*arr_2)[51]) {
 }
 
 int solve(vector<pos> tq[]) {
-	queue<pos> temp_q[11];
+	queue<pos> temp_q;
 	int k = 0;
 	int ans = 0;
 	int temp_map[51][51];
@@ -71,63 +71,70 @@ int solve(vector<pos> tq[]) {
 	memset(temp_visited, 0, sizeof(temp_visited));
 	copy_map(map, temp_map);
 	copy_map(visited, temp_visited);
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (map[i][j] == 2) {
+				temp_visited[i][j] = 999;
+			}
+		}
+	}
 	for (int i = 0; i < total_cnt; i++) {
 		if (visited_pos[i] == true) {
-			temp_q[k].push(tq[i][0]);
+			temp_q.push(tq[i][0]);
 			temp_visited[tq[i][0].y][tq[i][0].x] = 1;
-			k++;
+			//k++;
 		}
 	}
 
-	while (1) {		
-		for (int i = 0; i < v_cnt; i++) {
-			int c_size = temp_q[i].size();
-			for (int j = 0; j < c_size; j++) {
-				int cy = temp_q[i].front().y;
-				int cx = temp_q[i].front().x;
-				int c_cnt = temp_q[i].front().cnt;
-				ans = max(c_cnt, ans);
-				temp_q[i].pop();
-				for (int k = 0; k < 4; k++) {
-					int ny = cy + dy[k];
-					int nx = cx + dx[k];
-					if (nx < 0 || ny < 0 || nx >= N || ny >= N)
-						continue;
-					if (temp_visited[ny][nx] == 0) {
-						temp_visited[ny][nx] = 1;
-						temp_map[ny][nx] = c_cnt + 1;
-						temp_visited[ny][nx] = c_cnt + 1;
-						temp_q[i].push(pos(ny, nx, c_cnt + 1));
-					}
-				}
+	while (!temp_q.empty()) {
+		int cy = temp_q.front().y;
+		int cx = temp_q.front().x;
+		int c_cnt = temp_q.front().cnt;
+		ans = max(c_cnt, ans);
+		temp_q.pop();
+		for (int k = 0; k < 4; k++) {
+			int ny = cy + dy[k];
+			int nx = cx + dx[k];
+			if (nx < 0 || ny < 0 || nx >= N || ny >= N)
+				continue;
+			if (temp_visited[ny][nx] == 0) {
+				temp_visited[ny][nx] = 1;
+				temp_map[ny][nx] = c_cnt + 1;
+				temp_visited[ny][nx] = c_cnt + 1;
+				temp_q.push(pos(ny, nx, c_cnt + 1));
 			}
-			bool flag = false;
-			for (int i = 0; i < k; i++) {
-				if (temp_q[i].empty() == false) {
-					flag = true;
-				}
+			else if (temp_visited[ny][nx] == 999) {
+				temp_visited[ny][nx] = 1;
+				temp_map[ny][nx] = 2;
+				temp_q.push(pos(ny, nx, c_cnt + 1));
 			}
-			if (flag == false && check_map(temp_map, temp_visited) == false) {
-				return -1;
-			}
+		}
 
-			if (check_map(temp_map, temp_visited) == true) {
-				if (ans == 0) {
-					ans = 0;
-				}
-				else {
-					ans = max_value(temp_visited);
-				}
-				return ans;
-			}
-		}		
+		
+		
+
 	}
+
+	if (check_map(temp_map, temp_visited) == false) {
+		return -1;
+	}
+
+	if (check_map(temp_map, temp_visited) == true) {
+		if (ans == 0) {
+			ans = 0;
+		}
+		else {
+			ans = max_value(temp_visited);
+		}
+		return ans;
+	}
+	
 
 	return -1;
 }
 
 void select_pos(vector<pos> tq[], int v_size, int idx) {
-	
+
 	if (v_size == v_cnt) {
 		ans = solve(tq);
 		if (ans == -1) {
@@ -150,7 +157,7 @@ void select_pos(vector<pos> tq[], int v_size, int idx) {
 		for (int i = idx; i < total_cnt; i++) {
 			if (visited_pos[i] == false) {
 				visited_pos[i] = true;
-				select_pos(tq, v_size + 1, i);
+				select_pos(tq, v_size + 1, i+1);
 				visited_pos[i] = false;
 			}
 		}
@@ -187,7 +194,7 @@ int main() {
 	}
 
 	select_pos(q, 0, 0);
-		
+
 
 	cout << minV << endl;
 
