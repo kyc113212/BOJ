@@ -20,6 +20,16 @@ int dx[] = { -1,1,0,0 };
 int dy[] = { 0,0,-1,1 };
 //queue<pos> select_queue[11];
 
+bool isDone(int tmp[][51]) {
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (tmp[i][j] == 0) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
 
 
 bool check_map(int arr[][51], int temp_visited[][51]) {
@@ -69,28 +79,7 @@ int solve(vector<pos> tq[]) {
 		}
 	}
 
-	while (1) {
-		
-		bool flag = false;
-		for (int i = 0; i < k; i++) {
-			if (temp_q[i].empty() == false) {
-				flag = true;
-			}
-		}
-		if (flag == false && check_map(temp_map,temp_visited) == false) {
-			return -1;
-		}
-
-		if (check_map(temp_map,temp_visited) == true) {
-			if (ans == 0) {
-				ans = 0;
-			}
-			else {
-				ans = max_value(temp_visited);
-			}
-			return ans;
-		}
-
+	while (1) {		
 		for (int i = 0; i < v_cnt; i++) {
 			int c_size = temp_q[i].size();
 			for (int j = 0; j < c_size; j++) {
@@ -112,16 +101,33 @@ int solve(vector<pos> tq[]) {
 					}
 				}
 			}
-		}
+			bool flag = false;
+			for (int i = 0; i < k; i++) {
+				if (temp_q[i].empty() == false) {
+					flag = true;
+				}
+			}
+			if (flag == false && check_map(temp_map, temp_visited) == false) {
+				return -1;
+			}
 
-		
-
+			if (check_map(temp_map, temp_visited) == true) {
+				if (ans == 0) {
+					ans = 0;
+				}
+				else {
+					ans = max_value(temp_visited);
+				}
+				return ans;
+			}
+		}		
 	}
 
 	return -1;
 }
 
 void select_pos(vector<pos> tq[], int v_size, int idx) {
+	
 	if (v_size == v_cnt) {
 		ans = solve(tq);
 		if (ans == -1) {
@@ -148,7 +154,9 @@ void select_pos(vector<pos> tq[], int v_size, int idx) {
 				visited_pos[i] = false;
 			}
 		}
+		return;
 	}
+	return;
 }
 
 int main() {
@@ -171,6 +179,11 @@ int main() {
 				visited[i][j] = 1;
 			}
 		}
+	}
+
+	if (isDone(map)) {
+		cout << 0 << endl;
+		return 0;
 	}
 
 	select_pos(q, 0, 0);
