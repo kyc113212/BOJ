@@ -25,16 +25,16 @@ void rearrange_map() {
 					}
 				}
 			}
-			
+
 		}
 	}
 }
 
 bool check_map_count(char color) {
 	int count = 0;
-	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 6; j++) {
-			if (map[i][j] == color && visited[i][j] == 1)
+	for (int i = 0; i < 6; i++) {
+		for (int j = 11; j >= 0; j--) {
+			if (map[j][i] == color && visited[j][i] == 1)
 				count++;
 		}
 	}
@@ -61,11 +61,11 @@ void dfs(int y, int x, int cnt, char color) {
 				if (ny >= 0 && ny < 12 && nx >= 0 && nx < 12 && !visited[ny][nx] && map[ny][nx] == color) {
 					visited[ny][nx] = 1;
 					dfs(ny, nx, cnt + 1, color);
-					visited[ny][nx] = 0;
+					//visited[ny][nx] = 0;
 				}
 			}
 		}
-		else if (color_check == false){
+		else if (color_check == false) {
 			for (int i = 0; i < 12; i++) {
 				for (int j = 0; j < 6; j++) {
 					if (visited[i][j] == 1) {
@@ -82,14 +82,14 @@ void dfs(int y, int x, int cnt, char color) {
 		for (int i = 0; i < 4; i++) {
 			int ny = y + dy[i];
 			int nx = x + dx[i];
-			if (ny >= 0 && ny < 12 && nx >= 0 && nx < 12 && !visited[ny][nx] && map[ny][nx] == color) {
+			if (ny >= 0 && ny < 12 && nx >= 0 && nx < 6 && !visited[ny][nx] && map[ny][nx] == color) {
 				visited[ny][nx] = 1;
 				dfs(ny, nx, cnt + 1, color);
 				//visited[ny][nx] = 1;
 			}
 		}
 	}
-	
+
 }
 
 int main() {
@@ -103,13 +103,17 @@ int main() {
 		}
 	}
 
+
+	rearrange_map();
+
 	while (1) {
 		solve_count = 0;
+
 		for (int i = 0; i < 6; i++) {
-			for (int j = 11; j>= 0; j--) {
+			for (int j = 11; j >= 0; j--) {
 				if (map[j][i] != '.') {
 					visited[j][i] = 1;
-					dfs(i, j, 1, map[j][i]);
+					dfs(j, i, 1, map[j][i]);
 					memset(visited, 0, sizeof(visited));
 				}
 			}
