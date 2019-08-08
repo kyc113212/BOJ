@@ -12,8 +12,8 @@ int select[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 };
 int visited[15];
 vector<int> v;
 int maxV = -9999;
-int dx[] = { -1,1,0 };
-int dy[] = { 0,0,-1 };
+int dx[] = { -1,0,1 };
+int dy[] = { 0,-1,0 };
 
 int temp_y[] = { 0,0,0,-1 };
 
@@ -32,13 +32,9 @@ bool check_map(int arr[][15]) {
 	return true;
 }
 
-void rearrange_map(int (*arr2)[15]) {
+void rearrange_map(int(*arr2)[15]) {
 	for (int i = N - 1; i >= 0; i--) {
 		for (int j = 0; j < M; j++) {
-			/*if (arr2[i+1][j] == 1) {
-				arr2[i + 1][j] = arr2[i][j];
-				//arr[]
-			}*/
 			arr2[i][j] = arr2[i - 1][j];
 		}
 	}
@@ -47,7 +43,7 @@ void rearrange_map(int (*arr2)[15]) {
 	}
 }
 
-void copymap(int (*arr1)[15], int (*arr2)[15]) {
+void copymap(int(*arr1)[15], int(*arr2)[15]) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
 			arr1[i][j] = arr2[i][j];
@@ -55,8 +51,8 @@ void copymap(int (*arr1)[15], int (*arr2)[15]) {
 	}
 }
 
-int solve(vector<int> &v) {
-	
+int solve(vector<int>& v) {
+
 	int temp_map[16][15];
 	memset(temp_map, 0, sizeof(temp_map));
 	queue<pos> q;
@@ -69,80 +65,57 @@ int solve(vector<int> &v) {
 	int cnt = 0;
 
 	int q_size = q.size();
-	/*for (int j = 0; j < q_size; j++) {
-		int cx = q.front().x;
-		int cy = q.front().y;
-		int c_cnt = q.front().cnt;
-		q.pop();
-		int nx = cx + temp_y[3];
-		int ny = cy + temp_y[3];
-		int n_cnt = c_cnt + 1;
-		if (temp_map[ny][nx] == 1) {
-			cnt++;
-			temp_map[ny][nx] = 0;
-			q.push(pos(ny, nx, c_cnt + 1));
-		}
-	}*/
 
 	while (check_map(temp_map) == false) {
-		//int count = 0;
 		while (1) {
 			if (q.empty() == true) {
 				break;
 			}
-			while (q.front().cnt < D) {
-				int cx = q.front().x;
-				int cy = q.front().y;
-				int c_cnt = q.front().cnt;
-				q.pop();
-				if (c_cnt == 0) {
-					int nx = cx;
-					int ny = cy + temp_y[3];
+			if (q.front().cnt >= D)
+				break;
+			int cx = q.front().x;
+			int cy = q.front().y;
+			int c_cnt = q.front().cnt;
+			q.pop();
+			if (c_cnt == 0) {
+				int nx = cx;
+				int ny = cy + temp_y[3];
+				int n_cnt = c_cnt + 1;
+				if (nx >= M && ny >= N && nx < 0 && ny < 0)
+					continue;
+				if (temp_map[ny][nx] == 1) {
+					cnt++;
+					temp_map[ny][nx] = 0;
+					//q.push(pos(ny, nx, cnt + 1));
+				}
+				else {
+					q.push(pos(ny, nx, cnt + 1));
+				}
+			}
+			else {
+				for (int i = 0; i < 3; i++) {
+					int nx = cx + dx[i];
+					int ny = cy + dy[i];
 					int n_cnt = c_cnt + 1;
 					if (nx >= M && ny >= N && nx < 0 && ny < 0)
 						continue;
 					if (temp_map[ny][nx] == 1) {
 						cnt++;
 						temp_map[ny][nx] = 0;
-						//q.push(pos(ny, nx, cnt + 1));
 					}
 					else {
 						q.push(pos(ny, nx, cnt + 1));
 					}
 				}
-				else {
-					for (int i = 0; i < 3; i++) {
-						int nx = cx + dx[i];
-						int ny = cy + dy[i];
-						int n_cnt = c_cnt + 1;
-						if (nx >= M && ny >= N && nx < 0 && ny < 0)
-							continue;
-						if (temp_map[ny][nx] == 1) {
-							cnt++;
-							temp_map[ny][nx] = 0;
-							//q.push(pos(ny, nx, cnt + 1));
-						}
-						else {
-							q.push(pos(ny, nx, cnt + 1));
-						}
-					}
-				}
 			}
 		}
-		
+
 
 		while (!q.empty()) {
 			q.pop();
 		}
 
 		rearrange_map(temp_map);
-		/*for (int i = 0; i < N - 1; i++) {
-			for (int j = 0; j < M; j++) {
-				if (temp_map[i][j] == 1) {
-					temp_map[i + 1][j] = temp_map[i][j];
-				}
-			}
-		}*/
 		for (int i = 0; i < 3; i++) {
 			temp_map[N][v[i]] = 1;
 			q.push(pos(N, v[i], 0));
@@ -163,10 +136,10 @@ void select_pos(int cnt, int idx) {
 		if (!visited[i]) {
 			visited[i] = 1;
 			v.push_back(i);
-			select_pos(cnt + 1, i+1);
+			select_pos(cnt + 1, i + 1);
 			visited[i] = 0;
 			v.pop_back();
-		}		
+		}
 	}
 }
 
