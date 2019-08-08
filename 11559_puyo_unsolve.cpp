@@ -50,7 +50,7 @@ void dfs(int y, int x, int cnt, char color) {
 		for (int i = 0; i < 4; i++) {
 			int ny = y + dy[i];
 			int nx = x + dx[i];
-			if (ny >= 0 && ny < 12 && nx >= 0 && nx < 12 && !visited[ny][nx] && map[ny][nx] == color) {
+			if (ny >= 0 && ny < 12 && nx >= 0 && nx < 6 && !visited[ny][nx] && map[ny][nx] == color) {
 				color_check = true;
 			}
 		}
@@ -58,7 +58,7 @@ void dfs(int y, int x, int cnt, char color) {
 			for (int i = 0; i < 4; i++) {
 				int ny = y + dy[i];
 				int nx = x + dx[i];
-				if (ny >= 0 && ny < 12 && nx >= 0 && nx < 12 && !visited[ny][nx] && map[ny][nx] == color) {
+				if (ny >= 0 && ny < 12 && nx >= 0 && nx < 6 && !visited[ny][nx] && map[ny][nx] == color) {
 					visited[ny][nx] = 1;
 					dfs(ny, nx, cnt + 1, color);
 					//visited[ny][nx] = 0;
