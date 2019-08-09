@@ -48,7 +48,7 @@ int main() {
 
 	while (col > col_cnt) {
 
-		for (int i = 0; i < col; i++) {
+		for (int i = 0; i < row; i++) {
 			if (v[i][col_cnt].exist == 1) {
 				mass_count += v[i][col_cnt].mass;
 				v[i][col_cnt].exist = 0;
