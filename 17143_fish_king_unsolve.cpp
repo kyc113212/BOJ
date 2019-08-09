@@ -15,19 +15,27 @@ struct pos {
 };
 
 int row, col, M;
-int map[8][8];
-vector<pos> v[101];
-int dx[] = { 0,0,0,-1,1 };
-int dy[] = { 0,1,-1,0,0 };
+//int map[101][101];
+vector<pos> v[100];
+int dx[] = { 0,0,0,1,-1 };
+int dy[] = { 0,-1,1,0,0 };
 
 int main() {
 
 	cin >> row >> col >> M;
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
-			v[i].push_back(pos(0,0, 0, 0,0));
+			v[i].push_back(pos(0, 0, 0, 0, 0));
 		}
 	}
+
+	/*if (M == 0) {
+		cout << 0 << endl;
+		return 0;
+	}
+	if (row == 1 && col == 1) {
+		cout << v[0].
+	}*/
 
 	for (int i = 0; i < M; i++) {
 		int r, c, s, d, z;
@@ -39,9 +47,11 @@ int main() {
 		v[r][c].direction = d;
 		v[r][c].mass = z;
 		v[r][c].move = 0;
-		map[r][c] = d;
+		//map[r][c] = d;
 		//v.push_back(pos(r, c, s, d, z));
 	}
+
+	
 
 	int col_cnt = 0;
 	int mass_count = 0;
@@ -56,7 +66,7 @@ int main() {
 				v[i][col_cnt].direction = 0;
 				v[i][col_cnt].mass = 0;
 				v[i][col_cnt].move = 0;
-				map[i][col_cnt] = 0;
+				//map[i][col_cnt] = 0;
 				break;
 			}
 		}
@@ -97,51 +107,59 @@ int main() {
 							}
 						}
 
-						if (v[n_y][n_x].exist == 0) {
+						if (v[n_y][n_x].exist == 0) {	//이동한곳에 아무것도 없는경우
 							v[n_y][n_x].exist = 1;
 							v[n_y][n_x].direction = n_d;
-							v[n_y][n_x].mass = v[c_y][c_x].mass;
-							v[n_y][n_x].speed = v[c_y][c_x].speed;
+							v[n_y][n_x].mass = n_mass;
+							v[n_y][n_x].speed = n_speed;
 							v[n_y][n_x].move = 1;
-							map[n_y][n_x] = n_d;
+							//map[n_y][n_x] = n_d;
 
-							v[c_y][c_x].exist = 0;
-							v[c_y][c_x].direction = 0;
-							v[c_y][c_x].mass = 0;
-							v[c_y][c_x].speed = 0;
-							map[c_y][c_x] = 0;
+							if (v[c_y][c_x].move == 0) {
+								v[c_y][c_x].exist = 0;
+								v[c_y][c_x].direction = 0;
+								v[c_y][c_x].mass = 0;
+								v[c_y][c_x].speed = 0;
+								//map[c_y][c_x] = 0;
+							}
+
 							flag = true;
 						}
 						else if (v[n_y][n_x].move == 0 && v[n_y][n_x].exist == 1) {	//이동한 곳에 이동안한 상어가 있는경우.
 							if (n_y == c_y && n_x == c_x) {
-								v[n_y][n_x].exist = v[c_y][c_x].exist;
+								v[n_y][n_x].exist = v[c_y][c_x].exist;	//자기자신인경우
 								v[n_y][n_x].direction = n_d;
 								v[n_y][n_x].mass = v[c_y][c_x].mass;
 								v[n_y][n_x].speed = v[c_y][c_x].speed;
 								v[n_y][n_x].move = 1;
-								map[n_y][n_x] = n_d;
+								//map[n_y][n_x] = n_d;
 								flag = true;
 							}
 							else {
-								int temp_dir = v[n_y][n_x].direction;
+								int temp_dir = v[n_y][n_x].direction;	//move하지 않았으면 이동안한 상어를 이동시켜준다.
 								int temp_y = n_y;
 								int temp_x = n_x;
-								int temp_speed = n_speed;
-								int temp_mass = n_mass;
-								//돌아온게 자기 자신인경우
+								int temp_speed = v[n_y][n_x].speed;
+								int temp_mass = v[n_y][n_x].mass;
+							
 								v[n_y][n_x].exist = v[c_y][c_x].exist;
 								v[n_y][n_x].direction = n_d;
 								v[n_y][n_x].mass = v[c_y][c_x].mass;
 								v[n_y][n_x].speed = v[c_y][c_x].speed;
 								v[n_y][n_x].move = 1;
-								map[n_y][n_x] = n_d;
-								//vector<pos> temp_v = v[n_y];
+								//map[n_y][n_x] = n_d;
+
+								v[c_y][c_x].exist = 0;
+								v[c_y][c_x].direction = 0;
+								v[c_y][c_x].mass = 0;
+								v[c_y][c_x].speed = 0;
+								//map[c_y][c_x] = 0;
 								c_y = temp_y;
 								c_x = temp_x;
 								c_speed = temp_speed;
 								c_d = temp_dir;
 								c_m = temp_mass;
-							}							
+							}
 						}
 						else if (v[n_y][n_x].move == 1) {	//이동한곳에 이동한 상어가 있는경우
 							if (v[n_y][n_x].mass < v[c_y][c_x].mass) { //이동한 상어가 더 큰경우
@@ -150,24 +168,26 @@ int main() {
 								v[n_y][n_x].mass = v[c_y][c_x].mass;
 								v[n_y][n_x].speed = v[c_y][c_x].speed;
 								v[n_y][n_x].move = 1;
-								map[n_y][n_x] = n_d;
+								//map[n_y][n_x] = n_d;
 
 								v[c_y][c_x].exist = 0;
 								v[c_y][c_x].direction = 0;
 								v[c_y][c_x].mass = 0;
 								v[c_y][c_x].speed = 0;
-								map[c_y][c_x] = 0;
+								//map[c_y][c_x] = 0;
 							}
 							else {	//이동한 상어가 먹힘
-								v[c_y][c_x].exist = 0;
-								v[c_y][c_x].direction = 0;
-								v[c_y][c_x].mass = 0;
-								v[c_y][c_x].speed = 0;
-								map[c_y][c_x] = 0;
+								if (v[c_y][c_x].move == 0) {
+									v[c_y][c_x].exist = 0;
+									v[c_y][c_x].direction = 0;
+									v[c_y][c_x].mass = 0;
+									v[c_y][c_x].speed = 0;
+									//map[c_y][c_x] = 0;
+								}
 							}
 							flag = true;
 						}
-					}				
+					}
 				}
 			}
 		}
