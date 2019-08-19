@@ -68,6 +68,10 @@ void dijkstra(int x) {
 
 int main() {
 
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+
 	cin >> V >> E >> startN;
 	for (int i = 0; i < E; i++) {
 		int f, t, w;
