@@ -18,17 +18,23 @@ vector<value> v;
 void dfs(int idx, int total_sum) {
 	if (idx > N)
 		return;
-	else {
-		for (int i = idx; i < N; i++) {
-			if (!visited[i]) {
+	else if(idx < N) {
+		maxV = max(maxV, total_sum);
+	}
+	for (int i = idx; i < N; i++) {
+		if (!visited[i]) {
+			if (idx + v[i].duration < N) {
 				total_sum += v[i].pay;
 				visited[i] = true;
-				dfs(idx + v[i].duration - 1, total_sum);
+				dfs(idx + v[i].duration, total_sum);
 				visited[i] = false;
 				total_sum -= v[i].pay;
 			}
+			else
+				return;			
 		}
 	}
+	return;
 }
 
 int main() {
@@ -42,9 +48,13 @@ int main() {
 
 	for (int i = 0; i < v.size(); i++) {
 		visited[i] = true;
-		dfs(i + 1, v[i].pay);
+		dfs(i + v[i].duration, v[i].pay);
 		visited[i] = false;
 	}
+
+	//if(v[v.size()-1].duration == 1 )
+
+	cout << maxV << endl;
 
 	return 0;
 }
