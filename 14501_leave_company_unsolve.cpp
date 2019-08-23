@@ -11,7 +11,7 @@ struct value {
 };
 
 int N;
-int maxV = -9999;
+int maxV = 0;
 int visited[16];
 vector<value> v;
 
