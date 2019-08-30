@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <cstring>
 
 using namespace std;
 
@@ -11,21 +12,23 @@ struct pos {
 	pos(int a, int b, int c) : y(a), x(b), range(c) {}
 };
 
-int maxV = 0;
-int map[51][51];
-int visited[6];
+int minV = 9999;
+int map[101][101];
+int visited[10];
 int R, C, K;
 vector<pos> v;
+int dx[] = { 1,0,-1,0 };
+int dy[] = { 0,1,0,-1 };
 
-void copy_map(int origin[][51], int copy[][51]) {
+void copy_map(int origin[][101], int copy[][101]) {
 	for (int i = 0; i < R; i++) {
-		for (int j = 0; j < R; j++) {
+		for (int j = 0; j < C; j++) {
 			copy[i][j] = origin[i][j];
 		}
 	}
 }
 
-void calc_value(int arr[][51]) {
+void calc_value(int arr[][101]) {
 
 	int sum = 0;
 
@@ -33,7 +36,7 @@ void calc_value(int arr[][51]) {
 		for (int j = 0; j < C; j++) {
 			sum += arr[i][j];
 		}
-		maxV = max(sum, maxV);
+		minV = min(sum, minV);
 		sum = 0;
 	}
 
@@ -41,7 +44,7 @@ void calc_value(int arr[][51]) {
 
 void solve(vector<pos> &tv) {
 
-	int temp_map[51][51];
+	int temp_map[101][101];
 	memset(temp_map, 0, sizeof(temp_map));
 	copy_map(map, temp_map);
 
@@ -56,15 +59,40 @@ void solve(vector<pos> &tv) {
 			int e_x = c_x + r;
 			int e_y = c_y + r;
 			int around = r * 8;
+			int line_count = around / 4;
 			int i = 0;
 			
+			
+			int dir = 0;
+			int temp1 = 0;
+			int temp2 = 0;
+
+			temp1 = temp_map[s_y][s_x];
+			temp2 = temp_map[s_y + dy[dir]][s_x + dx[dir]];
+
+			while (i < around) {
+
+				temp_map[s_y + dy[dir]][s_x + dx[dir]] = temp1;
+				temp1 = temp2;
+				s_y += dy[dir];
+				s_x += dx[dir];
+				i++;
+				if (i%line_count == 0) {
+					dir++;
+					if (dir > 3)
+						break;
+				}
+				temp2 = temp_map[s_y + dy[dir]][s_x + dx[dir]];
+
+				
+			}
 
 
 		}
 	}
 
 	calc_value(temp_map);
-	
+
 }
 
 void dfs(int idx, int select_count, vector<pos> &tv) {
@@ -78,7 +106,7 @@ void dfs(int idx, int select_count, vector<pos> &tv) {
 		if (visited[i] == false) {
 			visited[i] = true;
 			tv.push_back(v[i]);
-			dfs(i, select_count + 1,tv);
+			dfs(i, select_count + 1, tv);
 			tv.pop_back();
 			visited[i] = false;
 		}
@@ -116,6 +144,8 @@ int main() {
 			visited[i] = false;
 		}
 	}
+
+	cout << minV << endl;
 
 	return 0;
 }
