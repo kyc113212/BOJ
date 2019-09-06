@@ -15,10 +15,10 @@ struct value {
 	value(int a, int b, int c, int d) : y(a), x(b), dir(c), camera_type(d) {}
 };
 
-int cctv_dir1[][4] = { {1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
-int cctv_dir2[][4] = { {0,1,0,1},{1,0,1,0}};
-int cctv_dir3[][4] = { {1,1,0,0},{0,1,1,0},{0,0,1,1},{1,0,0,1} };
-int cctv_dir4[][4] = { {1,1,1,0},{0,1,1,1},{1,0,1,1},{1,1,0,1} };
+int cctv_dir1[][4] = { {0,0,0,0}, {1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1} };
+int cctv_dir2[][4] = { {0,0,0,0}, {0,1,0,1},{1,0,1,0}};
+int cctv_dir3[][4] = { {0,0,0,0}, {1,1,0,0},{0,1,1,0},{0,0,1,1},{1,0,0,1} };
+int cctv_dir4[][4] = { {0,0,0,0}, {1,1,1,0},{0,1,1,1},{1,0,1,1},{1,1,0,1} };
 int cctv_dir5[][4] = { {1,1,1,1} };
 int N, M;
 int map[9][9];
@@ -44,7 +44,25 @@ void solve(vector<value>& tv) {
 		int cy = tv[i].y;
 		int c_dir = tv[i].dir;
 		int c_camera_type = tv[i].camera_type;
-		if (c_dir == 1) {
+		if (c_camera_type == 1) {
+			for (int j = 0; j < 4; j++) {
+				if (cctv_dir1[c_dir][j] == 1) {
+					int nx = cx;
+					int ny = cy;
+					while (1) {
+						nx = nx + dx[j];
+						ny = ny + dy[j];
+						if (ny >= N || nx >= M || nx < 0 || ny < 0)
+							break;
+						if (temp_map[ny][nx] == 6)
+							break;
+						if (temp_map[ny][nx] >= 1 && temp_map[ny][nx] <= 4 && temp_map[ny][nx] == 9)
+							continue;
+						if (temp_map[ny][nx] == 0)
+							temp_map[ny][nx] == 9;
+					}
+				}
+			}
 		}
 	}
 
