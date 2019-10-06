@@ -11,6 +11,7 @@ struct pos {
 };
 
 char map[1001][1001];
+bool visited[1001][1001];
 queue<pos> fire;
 queue<pos> jihoon;
 int R, C;
@@ -40,7 +41,7 @@ int bfs() {
 	char count_map[1001][1001];
 	memset(count_map, 0, sizeof(count_map));
 
-	while (1) {
+	while (!jihoon.empty()) {
 		int j_size = jihoon.size();
 		int f_size = fire.size();
 		memset(count_map, 0, sizeof(count_map));
@@ -61,6 +62,8 @@ int bfs() {
 				if (ny >= R || nx >= C || ny < 0 || nx < 0)
 					continue;
 				if (map[ny][nx] == '.' || map[ny][nx] == 'J') {
+					visited[ny][nx] = true;
+					map[ny][nx] = 'F';
 					fire.push(pos(ny, nx, c_cnt + 1));
 				}
 			}
@@ -71,7 +74,7 @@ int bfs() {
 			int y = jihoon.front().y;
 			int c_cnt = jihoon.front().cnt;
 			jihoon.pop();
-			
+
 			for (int j = 0; j < 4; j++) {
 				int nx = x + dx[j];
 				int ny = y + dy[j];
@@ -81,20 +84,24 @@ int bfs() {
 					return c_cnt + 1;
 				if (map[ny][nx] == '.') {
 					map[ny][nx] = 'J';
-					count_map[ny][nx] = c_cnt + 1;
+					visited[ny][nx] = true;
+					jihoon.push(pos(ny, nx, c_cnt + 1));
 				}
 			}
 		}
 
-		
 
-		for (int i = 0; i < R; i++) {
+
+/*		for (int i = 0; i < R; i++) {
 			for (int j = 0; j < C; j++) {
 				if (map[i][j] == 'J') {
-					jihoon.push(pos(i, j, count_map[i][j]));
+					if (!visited[i][j]) {
+						visited[i][j] = true;
+						jihoon.push(pos(i, j, count_map[i][j]));
+					}
 				}
 			}
-		}
+		}*/
 
 	}
 
@@ -103,14 +110,19 @@ int bfs() {
 
 int main() {
 
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
 
 	cin >> R >> C;
 
 	for (int i = 0; i < R; i++) {
-		string s;
-		cin >> s;
+		//string s;
+		//cin >> s;
 		for (int j = 0; j < C; j++) {
-			map[i][j] = s[j];
+			char s;
+			cin >> s;
+			map[i][j] = s;
 			if (map[i][j] == 'J')
 				jihoon.push(pos(i, j, 0));
 			else if (map[i][j] == 'F')
@@ -125,6 +137,6 @@ int main() {
 	else {
 		cout << rst << endl;
 	}
-	
+
 	return 0;
 }
