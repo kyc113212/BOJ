@@ -1,164 +1,176 @@
 #include <iostream>
 #include <queue>
-#include <algorithm>
-#include <vector>
 #include <cstring>
 
 using namespace std;
 
-int map[16][15];
-int N, M, D;
-int select[] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14 };
-int visited[15];
-vector<int> v;
-int maxV = -9999;
-int dx[] = { -1,0,1 };
-int dy[] = { 0,-1,0 };
-
-int temp_y[] = { 0,0,0,-1 };
-
 struct pos {
-	int x, y, cnt;
-	pos(int a, int b, int c) : y(a), x(b), cnt(c) {}
+	int y, x, cnt, start_idx;
+	pos(int a, int b, int c, int d) : y(a), x(b), cnt(c), start_idx(d) {}
 };
 
-bool check_map(int arr[][15]) {
+int map[15][15];
+int check_archor[15];
+int N, M, D;
+int dx[] = { -1,0,1 };
+int dy[] = { 0,-1,0 };
+int maxV = 0;
+
+bool check_all(int temp_map[][15]) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
-			if (arr[i][j] != 0)
+			if (temp_map[i][j] != 0)
 				return false;
 		}
 	}
+
 	return true;
 }
 
-void rearrange_map(int(*arr2)[15]) {
-	for (int i = N - 1; i >= 0; i--) {
-		for (int j = 0; j < M; j++) {
-			arr2[i][j] = arr2[i - 1][j];
-		}
-	}
-	for (int j = 0; j < M; j++) {
-		arr2[0][j] = 0;
-	}
-}
+int solve(vector<int> &tv) {
+	int a;
+	int temp_map[15][15];
+	int check_visited[15][15];
+	int check_final[15];
+	memset(temp_map, 0, sizeof(temp_map));
+	memset(check_visited, 0, sizeof(check_visited));
+	memset(check_final, 0, sizeof(check_final));
 
-void copymap(int(*arr1)[15], int(*arr2)[15]) {
+	int count_kill = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
-			arr1[i][j] = arr2[i][j];
+			temp_map[i][j] = map[i][j];
 		}
 	}
-}
 
-int solve(vector<int>& v) {
+	while (!check_all(temp_map)) {
+		queue<pos> q;
 
-	int temp_map[16][15];
-	memset(temp_map, 0, sizeof(temp_map));
-	queue<pos> q;
-	copymap(temp_map, map);
-	for (int i = 0; i < 3; i++) {
-		temp_map[N][v[i]] = 1;
-		q.push(pos(N, v[i], 0));
-	}
-
-	int cnt = 0;
-
-	int q_size = q.size();
-
-	while (check_map(temp_map) == false) {
-		while (1) {
-			if (q.empty() == true) {
-				break;
-			}
-			if (q.front().cnt >= D)
-				break;
-			int cx = q.front().x;
-			int cy = q.front().y;
-			int c_cnt = q.front().cnt;
-			q.pop();
-			if (c_cnt == 0) {
-				int nx = cx;
-				int ny = cy + temp_y[3];
-				int n_cnt = c_cnt + 1;
-				if (nx >= M && ny >= N && nx < 0 && ny < 0)
-					continue;
-				if (temp_map[ny][nx] == 1) {
-					cnt++;
-					temp_map[ny][nx] = 0;
-					//q.push(pos(ny, nx, cnt + 1));
-				}
-				else {
-					q.push(pos(ny, nx, cnt + 1));
-				}
-			}
-			else {
-				for (int i = 0; i < 3; i++) {
-					int nx = cx + dx[i];
-					int ny = cy + dy[i];
-					int n_cnt = c_cnt + 1;
-					if (nx >= M && ny >= N && nx < 0 && ny < 0)
+		memset(check_final, 0, sizeof(check_final));
+		queue<pos> temp_q;
+		for (int i = 0; i < tv.size(); i++) {
+			memset(check_visited, 0, sizeof(check_visited));
+			//memset(check_final, 0, sizeof(check_final));
+			q.push(pos(N, tv[i], 0, i));	//y,x,cnt,idx
+			while (!q.empty()) {
+				int cx = q.front().x;
+				int cy = q.front().y;
+				int c_cnt = q.front().cnt + 1;
+				//int c_idx = q.front().start_idx + 1;
+				q.pop();
+				for (int j = 0; j < 3; j++) {
+					int nx = cx + dx[j];
+					int ny = cy + dy[j];
+					if (nx < 0 || ny < 0 || nx >= M || ny >= N)
 						continue;
-					if (temp_map[ny][nx] == 1) {
-						cnt++;
-						temp_map[ny][nx] = 0;
-					}
-					else {
-						q.push(pos(ny, nx, cnt + 1));
+					if (check_visited[ny][nx] == 1)
+						continue;
+					/*if (c_cnt == D) {
+						if (check_final[c_idx] == 0) {
+							if (temp_map[ny][nx] == 1) {
+								count_kill++;
+								temp_map[ny][nx] = 0;
+								check_final[c_idx] = 1;
+							}
+						}
+					}*/
+					//우선순위가 높은 적부터 죽여야됨
+					if (c_cnt <= D) {
+						if (check_final[i] == 0) {
+							if (temp_map[ny][nx] == 1 || temp_map[ny][nx] == 2) {//check_final[c_idx] == 0
+								if (temp_map[ny][nx] == 1) {
+									count_kill++;
+									temp_map[ny][nx] = 2;
+									temp_q.push(pos(ny, nx, 0, 0));
+									check_final[i] = 1;
+								}
+								else {
+									temp_map[ny][nx] = 2;
+									temp_q.push(pos(ny, nx, 0, 0));
+									check_final[i] = 1;
+								}
+								//break;
+							}
+							else {
+								check_visited[ny][nx] = 1;
+								q.push(pos(ny, nx, c_cnt, i));
+							}
+						}
+						
 					}
 				}
 			}
+
 		}
 
-
-		while (!q.empty()) {
-			q.pop();
+		//한턴 끝난 이후 0으로
+		while (!temp_q.empty()) {
+			int cx = temp_q.front().x;
+			int cy = temp_q.front().y;
+			temp_map[cy][cx] = 0;
+			temp_q.pop();
+		}
+		
+		for (int i = 0; i < M; i++) {
+			int temp_y_v = temp_map[0][i];
+			int temp_y_v2 = temp_map[1][i];
+			int j = 1;
+			while (j < N) {
+				temp_map[j][i] = temp_y_v;
+				temp_y_v = temp_y_v2;
+				j++;
+				temp_y_v2 = temp_map[j][i];
+			}
+		}
+		for (int i = 0; i < M; i++) {
+			temp_map[0][i] = 0;
 		}
 
-		rearrange_map(temp_map);
-		for (int i = 0; i < 3; i++) {
-			temp_map[N][v[i]] = 1;
-			q.push(pos(N, v[i], 0));
-		}
-
+		
 	}
 
-	return cnt;
+	//cout << count_kill << endl;
+
+	return count_kill;
 }
 
-void select_pos(int cnt, int idx) {
+void dfs(vector<int> &tv, int cnt,int idx) {
 	if (cnt == 3) {
-		int ans = solve(v);
-		maxV = max(maxV, ans);
+		maxV = max(maxV,solve(tv));
 		return;
 	}
 	for (int i = idx; i < M; i++) {
-		if (!visited[i]) {
-			visited[i] = 1;
-			v.push_back(i);
-			select_pos(cnt + 1, i + 1);
-			visited[i] = 0;
-			v.pop_back();
+		if (check_archor[i] == 0) {
+			check_archor[i] = 1;
+			tv.push_back(i);
+			dfs(tv, cnt + 1, i + 1);
+			check_archor[i] = 0;
+			tv.pop_back();
 		}
 	}
 }
-
-
-
-
 
 int main() {
 
 	cin >> N >> M >> D;
+
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
 			cin >> map[i][j];
 		}
 	}
 
-	select_pos(0, 0);
+	vector<int> tv;
+	for (int i = 0; i < N; i++) {
+		check_archor[i] = 1;
+		tv.push_back(i);
+		dfs(tv, 1, i);
+		check_archor[i] = 0;
+		tv.pop_back();
+	}
 
 	cout << maxV << endl;
+
 
 	return 0;
 }
