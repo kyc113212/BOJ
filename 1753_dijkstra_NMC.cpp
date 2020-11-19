@@ -27,7 +27,7 @@ pq.push({ -cost, vtx } ); 로 푸쉬하고, top()으로 받아올 때 다시 -�
 
 vector<value> graph[MAX];
 int dist[MAX];
-int visited[MAX];
+//int visited[MAX];
 
 void dijkstra(int x) {
 	for (int i = 1; i <= V; i++) {
