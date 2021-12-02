@@ -1,0 +1,46 @@
+//1701 문제
+
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <deque>
+#include <cstring>
+
+using namespace std;
+int arr[5001];
+
+int main() {
+
+	ios_base::sync_with_stdio(false);
+
+	string s;
+	cin >> s;
+	deque<char> dq;
+	for (int i = 0; i < s.size(); i++) {
+		dq.push_back(s[i]);
+	}
+
+	int maxV = 0;
+	
+	while (!dq.empty()) {
+		int j = 0;
+		memset(arr, 0, sizeof(arr));
+		for (int i = 1; i < dq.size(); i++) {
+			while (j > 0 && dq[i] != dq[j]) {
+				j = arr[j - 1];
+			}
+			if (dq[i] == dq[j]) {
+				arr[i] = ++j;
+			}
+		}
+		for (int i = 0; i < dq.size(); i++) {
+			maxV = max(maxV, arr[i]);
+		}
+		dq.pop_front();
+	}
+	
+	cout << maxV << '\n';
+
+
+	return 0;
+}
