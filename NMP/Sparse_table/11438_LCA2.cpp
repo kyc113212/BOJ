@@ -67,12 +67,19 @@ int main() {
 		}
 		int diff = depth[u] - depth[v];
 
-		for (int j = 0; diff; j++) {
+		for (int j = 17; j >= 0; j--) {
+			if (diff & (1 << j)) {
+				u = parent[u][j];
+			}
+		}
+
+		/*for (int j = 0; diff; j++) {
 			if (diff % 2) {
 				u = parent[u][j];
 			}
 			diff /= 2;
-		}
+		}*/
+
 
 		if (u != v) {
 			for (int j = 17; j >= 0; j--) {
